@@ -1,0 +1,1150 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/js/DragDropTouch.js"></script>
+<script src="~/scripts/knockout-3.4.0.js"></script>
+<script src="~/js/jquery.blockUI.js"></script>
+
+<style>
+    .hopper {
+        background-color: #043a6d;
+        color: #ffffff;
+        float: left;
+        height: 100%;
+        padding: 12px 8px 0 40px;
+        width: 12%;
+    }
+
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        right: 0;
+        background-color: turquoise;
+        overflow-x: hidden;
+        padding-top: 60px;
+        transition: 0.5s;
+    }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 12px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+    #map_canvas {
+        height: 100%;
+    }
+
+    div#gmap {
+        height: 500px;
+        width: 500px;
+        border: double;
+    }
+    /*#map {
+               height: 500px;
+               width: 500%;
+           }*/
+
+    .TextBoxAsLabel {
+        border: none;
+        background-color: #fff;
+        background: transparent;
+    }
+
+
+    table.scroll {
+        /* width: 100%; */ /* Optional */
+        /* border-collapse: collapse; */
+        border-spacing: 0;
+        border: 2px solid black;
+    }
+
+        table.scroll tbody,
+        table.scroll thead {
+            display: block;
+        }
+
+
+    .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        background: #000;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+    }
+
+    .loading {
+        width: 50px;
+        height: 57px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -28px 0 0 -25px;
+    }
+
+    .color {
+        color: white;
+    }
+
+    /*table tbody, table thead {
+        display: block;
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    table tbody {
+        overflow-y: scroll;
+        height: 530px;
+    }*/
+
+    table.webgrid-table tbody, table.webgrid-table thead {
+        display: block;
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    table.webgrid-table tbody {
+        overflow-y: scroll;
+        height: 530px;
+    }
+
+    .webgrid-table {
+        width: 100%;
+        display: table;
+        table-layout: fixed;
+    }
+
+        .webgrid-table tr {
+            width: 100%;
+            display: inline-table;
+        }
+
+        .webgrid-table thead {
+        }
+
+        .webgrid-table td, .webgrid-table th {
+            width: 12.5%;
+            word-break: normal;
+            white-space: normal;
+        }
+
+    .withoutattribute {
+        background-color: orange;
+    }
+
+    .withattribute {
+        background-color: yellow;
+    }
+</style>
+
+@*<link href="~/CSS/loading.css" rel="stylesheet" />*@
+<script type="text/javascript">
+
+    var content;
+    function AppViewModel() {
+       
+        var self = this;
+
+        self.timeinterval = ko.observableArray([]);
+
+        self.emp_list = ko.observableArray([]);
+
+        self.appointment = ko.observableArray([]);
+
+        self.concate = ko.observableArray([]);
+
+        self.apointmentwithtime = ko.observableArray([]);
+
+        self.descriptionappointment = ko.observableArray([]);
+
+        self.tempdesc = ko.observableArray([]);
+        var worktypename = [];
+        var timeandappointment = [];
+
+        var Seleteddate = $('#SeletedDate').val()
+
+        self.descriptionArryappointment = ko.observableArray([]);
+
+        var checkArray = new Array();
+
+        $.post('/Schedule/Timeintervaldata',
+           function (data_appointmenttime) {
+               //console.log(data_appointmenttime);
+
+               var timeArry = [];
+               var error = data_appointmenttime.error;
+               if (error == "No") {
+                   return false;
+               }
+               else {
+                   var i;
+                   var j = 0;
+                   var time;
+                   var k = 0;
+                   descriptionArry = [];
+
+                   for (i = 0; i < data_appointmenttime.data.length; i++) {
+                       time = data_appointmenttime.data[i].time_interval;
+                       time_interval_id = data_appointmenttime.data[i].time_interval_id;
+                       $.ajaxSetup({ async: false });
+                       $.post('/Schedule/appointmentdata?time=' + data_appointmenttime.data[i].time_interval + '&date=' + Seleteddate + '&timeintervalid=' + time_interval_id,
+                        function (data_appointment) {
+                            var error = data_appointment.error;
+                            if (error == "No") {
+                                return false;
+                            }
+                            else {
+                                for (j = 0; j < data_appointment.appointmentlist.length; j++) {
+                                    //var setheight = data_appointment.appointmentlist[j].time + 20;
+                                    var setheight = data_appointment.appointmentlist[j].time;
+                                    descriptionArry.push({ desc: data_appointment.appointmentlist[j].description, color: data_appointment.appointmentlist[j].notes, appointment_id: data_appointment.appointmentlist[j].appointment_id, time: setheight + "px" });
+                                }
+                                self.apointmentwithtime.push({ time_interval_id: time_interval_id, timeinterval: time, discription: descriptionArry });
+                                //self.apointmentwithtime.push({ timeinterval: time, discription: self.tempdesc });
+                                descriptionArry.length = 0;
+                                //self.tempdesc.length = 0;
+
+                                while (descriptionArry.length > 0) {
+                                    descriptionArry.pop();
+                                }
+                            }
+                        })
+                       descriptionArry.length = 0;
+                       //console.log(self.apointmentwithtime)
+
+                       while (descriptionArry.length > 0) {
+                           descriptionArry.pop();
+                       }
+                       time = "";
+                   }
+                   return true;
+               }
+           })
+
+        $.post('/Schedule/displayemployee',
+            function (data_emp) {
+                var timeintervaldata = new Array();
+                var appointmentdesctription = new Array();
+                var error = data_emp.error;
+                //var emp_data_whole = [];
+                if (error == "No") {
+                    return false;
+                }
+                else {
+                    var i = 0;
+                    var h = 0;
+                    for (i = 0; i < data_emp.data.length; i++) {
+                        $.ajaxSetup({ async: false });
+                        $.post('/Schedule/Timeintervaldata',
+                            function (data_timeinterval) {
+                                var error = data_timeinterval.error;
+                                if (error == "No") {
+                                    return false;
+                                }
+                                else {
+                                    var i = 0;
+                                    var k = 0;
+                                    var selecteddate = $('#SeletedDate').val();
+                                    for (j = 0; j < data_timeinterval.data.length; j++) {
+                                        var newTempArray = new Array();
+                                        newTempArray.push({ timeinterval: data_timeinterval.data[j].time_interval });
+                                        //console.log(newTempArray)
+                                        i = h;
+                                        $.ajaxSetup({ async: false });
+                                        $.post('/Schedule/getappointmentofemp?emp_id=' + data_emp.data[i].emp_id + "&time=" + data_timeinterval.data[j].time_interval_id + "&date=" + selecteddate,
+                                            function (data) {
+
+                                                var error = data.appointmentlist.error;
+                                                if (error == "No") {
+                                                    //return false;
+                                                }
+                                                else {
+                                                    for (k = 0; k < data.appointmentlist.length; k++) {
+                                                        //var setheightofapp = data.appointmentlist[k].time + 20;
+                                                        var setheightofapp = data.appointmentlist[k].time;
+                                                        appointmentdesctription.push({ description: data.appointmentlist[k].description, color: data.appointmentlist[k].notes, appointment_id: data.appointmentlist[k].appointment_id, time: setheightofapp + "px" });
+                                                    }
+                                                }
+                                            });
+                                        timeintervaldata.push({ desctription: appointmentdesctription });
+                                        appointmentdesctription = [];
+
+                                        if (j == data_timeinterval.data.length - 1) {
+                                            h = i + 1;
+                                        }
+                                        if (i >= data_emp.data.length) {
+                                            break;
+                                        }
+                                    }
+                                    return true;
+                                }
+                            });
+                        //$.post('/Schedule/displayemployee_worktype?empid=' + data_emp.data[i].emp_id,
+                        //   function (data_worktype) {
+                        //       var error = data_worktype.error;
+                        //       if (error == "No") {
+                        //           return false;
+                        //       }
+                        //       else {
+                        //           var i = 0;
+                        //           for (i = 0; i < data_worktype.data.length; i++) {
+                        //               worktypename.push({ worktypename: data_worktype.data[i].name });
+                        //           }
+                        //           //return true;
+                        //       }
+                        //   });
+                        //checkArray.push({ emp_name: data_emp.data[i].emp_firstname, emp_transpotation: data_emp.data[i].name, emp_id: data_emp.data[i].emp_id, timeintervaldata: timeintervaldata, workname: worktypename });
+                        checkArray.push({ emp_name: data_emp.data[i].emp_firstname, emp_transpotation: data_emp.data[i].name, emp_id: data_emp.data[i].emp_id, timeintervaldata: timeintervaldata, workname: data_emp.data[i].emp_transportion });
+
+                        self.emp_list.push({ emp_name: data_emp.data[i].emp_firstname, emp_transpotation: data_emp.data[i].name, emp_id: data_emp.data[i].emp_id, timeintervaldata: timeintervaldata, workname: data_emp.data[i].emp_transportion });
+                        timeintervaldata = [];
+                        //timeintervaldata.length = 0;
+                        //worktypename = [];
+                        $('.paymentTable td').each(function () {
+                            var cellText = $(this).html();
+                            if (cellText.indexOf("Unavailable") > -1) {
+                                //$(this).css('background-color', 'red');
+                                //$(this).removeClass('tdPayment')
+                                $(this).html("");
+                                $(this).html("Unavailable");
+                                $(this).addClass("blackblock");
+                                //highlight($(this));
+                            }
+                        });
+
+                        $('table tr td div').each(function () {
+                            //alert(this.id);
+                            if (this.id == 0) {
+                                //  alert("#"+ this.id);
+                                $("div#0.0").css({ 'border': "" });
+                            }
+
+                        });
+
+                        // generate id for all the cell by its header id and it's first row id
+                        setTimeout(function () {
+                            $(".traceID").each(function () {
+                                var emp_id_th_trace = $('th:first', $(this).parents('tr')).attr('id');
+                                var $cell1 = $(this);
+                                var cellIndex1 = $cell1.index();
+                                var timeintervalidth_trace = ($cell1.closest("table").find("tr > th").eq(cellIndex1)).attr('id');
+                                $(this).attr("id", emp_id_th_trace + "-" + timeintervalidth_trace);
+                            });
+                        }, 3000);
+
+                    }
+                    return true;
+
+                }
+
+            });
+
+        $("#datepicker").datepicker({
+
+            minDate: new Date(),
+            numberOfMonths: 1,
+            onSelect: function (selected) {
+
+                var dt = new Date(selected);
+                var currenturl = window.location.href;
+                var right_text = currenturl.substring(0, currenturl.indexOf("?"));
+                dt.setDate(dt.getDate());
+                var dating = $('#datepicker').val();
+
+
+                window.location.replace(right_text + "?date=" + dating + "");
+
+
+            }
+            //window.location.replace("schedule/Index?date=" + dating + "");
+            //}
+        });
+
+        $("#datepicker").mousedown(function () {
+            $('#ui-datepicker-div').toggle();
+            // $(this).datepicker("hide");
+        });
+
+        
+    }
+
+    $(document).ready(function () {
+
+        $(".overlay").show();
+
+        var datequery = null;
+        var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+
+        for (var i = 0; i < url.length; i++) {
+            var urlparam = url[i].split('=');
+            datequery = urlparam[1];
+        }
+        if (datequery == null) {
+            var date = new Date();
+            datequery = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+        }
+
+        var d = new Date();
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+        //var output = d.getFullYear() + '/' + month + '/' + day;
+        var output = month + '/' + day + '/' + d.getFullYear();
+
+        if (new Date(datequery) < new Date(output)) {
+            datequery = output;
+            window.location.replace("schedule?date=" + datequery + "");
+        }
+
+        $('#datepicker').val(datequery);
+        $('#SeletedDate').val(datequery);
+
+        ko.applyBindings(AppViewModel());
+
+        var appoinemtid = 0;
+        var emp_id_th = 0;
+        var timeintervalidth = 0;
+        var $cell = null;
+        var validationmsg = null;
+        setTimeout(function () {
+            //Bind employeedetail for modelpopup
+            $("div.emp-name").click(function () {
+                var id = $(this).attr('id');
+                $.post('/Schedule/EmployeeDetail?empdata_id=' + id,
+                    function (data) {
+                        //    console.log(data);
+                        var EmpName = data.empdetail[0];
+                        var EmpAttribute = data.empdetail[1];
+                        var EmpDesc = data.empdetail[2];
+                        var Emptrans = data.empdetail[4];
+                        var Empquali = data.empdetail[5];
+                        var EmpPhone = data.empdetail[3];
+
+                        $('#EmpName').empty();
+                        $('#EmpAttribute').empty();
+                        $('#EmpDesc').empty();
+                        $('#Empquali').empty();
+                        $('#Emptrans').empty();
+                        $('#EmpPhone').empty();
+
+                        EmpAttribute = EmpAttribute.replace(/,/, '');
+                        Empquali = Empquali.replace(/,/, '');
+
+                        $('#EmpName').append(EmpName);
+                        $('#EmpAttribute').append(EmpAttribute);
+                        $('#EmpDesc').append(EmpDesc);
+                        $('#Emptrans').append(Emptrans);
+                        $('#Empquali').append(Empquali);
+                        $('#EmpPhone').append(EmpPhone);
+                    });
+            });
+
+            //Dragged appointment
+            $(".tdPayment").sortable({
+                connectWith: ".tdPayment",
+                revert: 500,
+                remove: function (e, ui) {
+                    var $this = $(this);
+                    var childs = $this.find('div');
+                    appoinemtid = ui.item.attr("id");
+                },
+                receive: function (e, ui) {
+                    emp_id_th = $('th:first', $(this).parents('tr')).attr('id');
+                    $cell = $(this);
+                    var cellIndex = $cell.index();
+                    timeintervalidth = ($cell.closest("table").find("tr > th").eq(cellIndex)).attr('id');
+                    $(this).contents().filter(function () {
+                        return this.nodeType == 3; //Node.TEXT_NODE
+                    }).remove();
+                },
+                start: function (e, ui) {
+                    appoinemtid = ui.item.attr("id");
+                    ui.item.attr("title", "dragged");
+                    ui.item.attr("xpos", $(this).attr("id"));
+                    checkingfordata(appoinemtid);
+                },
+                stop: function () {
+                    var flag = "false";
+                    duration = 0;
+                    var datequery = $('#SeletedDate').val();
+                    $.post('/Schedule/validation?appointmentid=' + appoinemtid + "&empid=" + emp_id_th + "&timeintervalidth=" + timeintervalidth + '&date=' + datequery,
+                           function (data_validation) {
+                               var error = data_validation.error;
+                               if (error == "No") {
+                                   return false;
+                               }
+                               else {
+                                   $('#validationmsg').empty();
+                                   $('#validationmsg').append(data_validation.data[0]);
+                                   flag = data_validation.data[1]
+                                   validationmsg = data_validation.data[0];
+                                   $('#validationmsg').empty();
+                                   $('#validationmsg1').empty();
+                                   $('#validationmsg').append(data_validation.data[0]);
+                                   $('#validationmsg1').append(data_validation.data[0]);
+
+                                   $('#validationmsgfortime').empty();
+                                   $('#validationmsgfortime').append(data_validation.data[0]);
+
+
+                               }
+                           });
+                    if (validationmsg == "Login Failed") {
+                        location.reload();
+                    }
+
+                    if (flag == "false") {
+                        if (emp_id_th != '0') {
+                            //$.blockUI({ message: $('#dialog') });
+                            $('#validationmsgfortime').css("display", "block")
+                            $('#validationmsgfortime').removeClass("alert alert-success");
+                            $('#validationmsgfortime').addClass("alert alert-danger")
+                            setTimeout(function () {
+                                $('#validationmsgfortime').css("display", "none")
+                            }, 3000);
+                            emp_id_th = 0;
+                        }
+                        $(this).sortable('cancel');
+                        if (validationmsg == "Employee is Unavilable!") {
+                            $cell.html("Unavailable");
+                            emp_id_th = 0;
+                        }
+                    }
+
+                    else if (flag == "nothing") {
+                        emp_id_th = 0;
+                    }
+                    else {
+                        //$(".overlay").show();
+                        duration = 0;
+                        if (emp_id_th == "0") {
+                            //$.post('/Schedule/updateappointment?appointmentid=' + appoinemtid + "&empid=" + emp_id_th + "&timeintervalidth=" + timeintervalidth,
+                            //      function (data_emp) {
+                            //          $("#" + appoinemtid).removeAttr("title")
+                            //      });
+                        }
+
+                        //$(".overlay").hide();
+                        if (emp_id_th != "0") {
+                            $('#validationmsgfortime').css("display", "block")
+                            $('#validationmsgfortime').removeClass("alert alert-danger");
+                            $('#validationmsgfortime').addClass("alert alert-success");
+                            setTimeout(function () {
+                                $('#validationmsgfortime').css("display", "none")
+                            }, 3000);
+                            //$.blockUI({ message: $('#success') });
+                            emp_id_th = 0;
+                        }
+                    }
+                    $(".traceID").each(function () {
+                        $(this).removeClass("withattribute");
+                        $(this).removeClass("withoutattribute");
+                    });
+                }
+            }).disableSelection();
+            //reset code
+            $(".overlay").hide();
+        }, 1000);
+
+        
+
+        // call when save button click
+        $("#saveappointment").click(function () {
+            $(".overlay").show();
+            $.post('/Schedule/saveappointment?date=' + datequery,
+                function (data) {
+                    var error = data.error;
+
+                    var appointmentid = 0;
+                    var i = 0;
+                    for (i = 0; i < data.data.length; i++) {
+                        appointmentid = data.data[i];
+                        //   alert(appointmentid);
+                        $("#" + appointmentid).removeAttr("title")
+
+                        $('#validationmsgfortime').empty();
+                        $('#validationmsgfortime').append("Appointment assigned successfully");
+                        $('#validationmsgfortime').addClass("alert alert-success");
+
+                        $('#validationmsgfortime').css("display", "block");
+                        setTimeout(function () {
+                            $('#validationmsgfortime').css("display", "none")
+                        }, 3000);
+
+
+                    }
+                    //if (error == "No") {
+                    //}
+                    // else {
+
+                    //}
+                });
+            $(".overlay").hide();
+        });
+        // call when reset button click
+
+        $("#reset").click(function () {
+            var flag = 1;
+            var table = document.getElementById("layoutofschedular");
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                for (var j = 0, col; col = row.cells[j]; j++) {
+                    var tdall = row.cells[j];
+                    $(tdall).each(function () {
+                        $(this).find('div').each(function () {
+                            if ($(this).attr("id") !== "undefined") {
+                                if ($(this).attr("title") == "dragged") {
+                                    flag = 0;
+                                    $("#" + $(this).attr("xpos")).append($(this));
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+            if (flag == 1) {
+                $('#validationmsgfortime').empty();
+                $('#validationmsgfortime').append("No appointments are there to reset");
+                $('#validationmsgfortime').addClass("alert alert-danger");
+
+                $('#validationmsgfortime').css("display", "block");
+                setTimeout(function () {
+                    $('#validationmsgfortime').css("display", "none")
+                }, 3000);
+            }
+        });
+
+
+
+
+    });
+
+    //var container = document.getElementById("scheduledivid");
+    //content = container.innerHTML;
+    //alert(content);
+    function checkingfordata(appoinemtidstart) {
+        var withoutattributeidofemp = [];
+        var withattributeidofemp = [];
+        var selecteddate = $('#SeletedDate').val();
+        var i = 0;
+        // employee is available color yellow
+        $.post('/Schedule/timeintervaldataofemp?appointmentid=' + appoinemtidstart + "&date=" + selecteddate,
+           function (data_emp) {
+               var error = data_emp.error;
+               if (error == "No") {
+               }
+               else {
+                   for (i = 0; i < data_emp.data.length; i++) {
+                       withoutattributeidofemp.push({ emp_idwithtimeintervalid: data_emp.data[i] })
+                   }
+
+               }
+           });
+
+        // employee attribute validation color orange
+        $.post('/Schedule/attribute_change_color?appointmentid=' + appoinemtidstart + "&date=" + selecteddate,
+            function (data_emp) {
+                var error = data_emp.error;
+                if (error == "No") {
+                }
+                else {
+                    for (i = 0; i < data_emp.data.length; i++) {
+                        withattributeidofemp.push({ emp_idwithtimeintervalid: data_emp.data[i] })
+                    }
+                }
+            });
+
+        // set the color according the available and attribute validation
+
+        $(".traceID").each(function () {
+            var gettraceid = $(this).attr("id");
+
+            for (i = 0; i < withoutattributeidofemp.length; i++) {
+                if (gettraceid == withoutattributeidofemp[i].emp_idwithtimeintervalid) {
+                    $(this).addClass("withoutattribute");
+                }
+            }
+
+            for (i = 0; i < withattributeidofemp.length; i++) {
+                if (gettraceid == withattributeidofemp[i].emp_idwithtimeintervalid) {
+                    $(this).addClass("withattribute");
+                }
+            }
+
+        });
+    }
+
+</script>
+
+@*that only for right panel*@
+<script>
+
+    function openNav(id) {
+        $.post('/Schedule/rightpaneldata?appointmentid=' + id,
+           function (data_right) {
+               var error = data_right.error;
+
+               if (error == "No") {
+                   return false;
+               }
+               else {
+                   var i = 0;
+                   var servicetyp = data_right.rightpanel[0];
+                   var customername = data_right.rightpanel[1];
+                   var customersecondaryname = data_right.rightpanel[2];
+                   var customeraddress = data_right.rightpanel[3];
+                   var customeremail = data_right.rightpanel[4];
+                   var customercontactinfo = data_right.rightpanel[5];
+                   var clientx_lat = data_right.rightpanel[6];
+                   var clienty_log = data_right.rightpanel[7];
+
+                   var CustomerAttributes = data_right.rightpanel[8];
+                   var Employeename = data_right.rightpanel[9];
+                   var Employeeattributes = data_right.rightpanel[10];
+                   var Employeenotes = data_right.rightpanel[11];
+                   var Appointmenttime = data_right.rightpanel[12];
+                   var Appointmentnote = data_right.rightpanel[13];
+                   var Appointmentdescription = data_right.rightpanel[14];
+                   var Appointmentattributes = data_right.rightpanel[15];
+                   var Appointmentduration = data_right.rightpanel[16];
+
+                   $.ajaxSetup({ async: false });
+                   var hidx_lat = null;
+                   var hidy_log = null;
+                   concatmapping = [];
+                   date = $('#SeletedDate').val();
+
+                   $.post('/Schedule/distancecalculate?x_log=' + clientx_lat + '&y_log=' + clienty_log + "&date=" + date,
+                   //$.post('/Schedule/distancecalculate?x_log=' + x_log + '&y_log=' + y_log + "&date=" + date,
+                       function (data) {
+                           var error = data.Caldistance.error;
+                           if (error == "No") {
+                               return false;
+                           }
+                           else {
+                               var i = 0;
+
+                               for (i = 0; i < data.Caldistance.length; i++) {
+                                   hidx_lat = hidx_lat + "," + data.Caldistance[i].x_lat;
+                                   hidy_log = hidy_log + "," + data.Caldistance[i].y_long;
+                                   //  alert(data.Caldistance[i].x_lat);
+                                   // alert(data.Caldistance[i].x_lat + " " + data.Caldistance[i].y_long);
+                                   concatmapping.push({ lat: data.Caldistance[i].x_lat, lng: data.Caldistance[i].y_long });
+                               }
+                               if (hidx_lat == null) {
+                                   hidx_lat = clientx_lat;
+                                   hidy_log = clienty_log;
+                                   concatmapping.push({ lat: hidx_lat, lng: hidy_log });
+                               }
+
+                               hidx_lat = hidx_lat.replace("null,", "");
+                               hidy_log = hidy_log.replace("null,", "");
+
+
+                               //var markers = [{ "lat": "21.6417069", "lng": "69.6292654" }, { "lat": "17.452665", "lng": "78.435608" }];
+                               //alert(concatmapping);
+                               return true;
+                           }
+                       });
+
+
+                   $('#servicetype').empty();
+                   $('#custname').empty();
+                   $('#custseconadaryname').empty();
+                   $('#custaddress').empty();
+                   $('#custemailaddress').empty();
+                   $('#custphoneno').empty();
+                   $('#custattri').empty();
+                   $('#empname').empty();
+                   $('#empattribute').empty();
+                   $('#empnote').empty();
+                   $('#apptime').empty();
+                   $('#appnote').empty();
+                   $('#appdesc').empty();
+                   $('#appattri').empty();
+                   $('#apptimeduration').empty();
+
+                   $('#servicetype').append(servicetyp);
+                   $('#custname').append(customername);
+                   $('#custseconadaryname').append(customersecondaryname);
+                   $('#custaddress').append(customeraddress);
+                   $('#custemailaddress').append(customeremail);
+                   $('#custphoneno').append(customercontactinfo);
+                   $('#custattri').append(CustomerAttributes);
+                   $('#empname').append(Employeename);
+                   $('#empattribute').append(Employeeattributes);
+                   $('#empnote').append(Employeenotes);
+                   $('#apptime').append(Appointmenttime);
+                   $('#appnote').append(Appointmentnote);
+                   $('#appdesc').append(Appointmentdescription);
+                   $('#appattri').append(Appointmentattributes);
+                   $('#apptimeduration').append(Appointmentduration + " min");
+
+                   $('#txtlat').val();
+                   $('#txtlon').val();
+                   $('#txtlat').val(clientx_lat);
+                   $('#txtlon').val(clienty_log);
+                   var mapstr = '';
+
+                   var lat = document.getElementById('txtlat').value;
+                   var lon = document.getElementById('txtlon').value;
+                   var myLatlng = null;
+                   myLatlng = new google.maps.LatLng(lat, lon) // This is used to center the map to show our markers
+
+                   var mapOptions = {
+                       center: myLatlng,
+                       zoom: 12,
+                       mapTypeId: google.maps.MapTypeId.ROADMAP,
+                       marker: true
+                   };
+
+                   var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+                   var marker = new google.maps.Marker({
+                       position: myLatlng
+                   });
+
+                   marker.setMap(map);
+                   //var markers = [{ "lat": "21.6417069", "lng": "69.6292654" }, { "lat": "17.452665", "lng": "78.435608" }];
+                   var markers = concatmapping
+
+                   //alert(concatmapping);
+
+                   var mapOptions = {
+                       center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
+                       zoom: 12,
+                       mapTypeId: google.maps.MapTypeId.ROADMAP
+                   };
+                   var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+                   var infoWindow = new google.maps.InfoWindow();
+
+                   var lat_lng = new Array();
+
+                   var currlat = $('#txtlat').val();
+                   var currlog = $('#txtlon').val();
+                   var latlngbounds = new google.maps.LatLngBounds();
+                   var pinImagegreen = new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/009900/");
+                   var pinImagered = new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/ff0000/");
+                   var pinImagered;
+                   var icon;
+                   for (i = 0; i < markers.length; i++) {
+                       var data = markers[i]
+
+                       var getdis = getDistanceFromLatLonInKm(currlat, currlog, data.lat, data.lng)
+
+                       if (getdis) {
+                           var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+                           lat_lng.push(myLatlng);
+                           var marker = new google.maps.Marker({
+                               visible: true,
+                               clickable: false,
+                               position: myLatlng,
+                               icon: pinImagered,
+                               map: map,
+                               title: data.title
+                           });
+
+                       }
+                       else {
+                           var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+                           lat_lng.push(myLatlng);
+                           var marker = new google.maps.Marker({
+                               visible: true,
+                               clickable: false,
+                               position: myLatlng,
+                               icon: pinImagegreen,
+                               map: map,
+                               title: data.title
+                           });
+
+                       }
+                       map.setOptions({ minZoom: 2, maxZoom: 15 });
+
+                       latlngbounds.extend(marker.position);
+                       (function (marker, data) {
+                           google.maps.event.addListener(marker, "click", function (e) {
+                               infoWindow.setContent(data.description);
+                               infoWindow.open(map, marker);
+                           });
+                       })(marker, data);
+                   }
+
+                   map.setCenter(latlngbounds.getCenter());
+                   map.fitBounds(latlngbounds);
+
+                   return false;
+               }
+           });
+
+        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+            var dLon = deg2rad(lon2 - lon1);
+            var a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2)
+            ;
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c; // Distance in km
+            if (d > 5) {
+                return true;
+            }
+            return false;
+            //return d;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180)
+        }
+        document.getElementById("mySidenav").className = "view_detail";
+    }
+    //function getempdetail(showmsgappid) {
+    //    $('#validationmsgfortime').css("display", "none")
+    //    $.post('/Schedule/getappointmenttime?appointmentid=' + showmsgappid,
+    //        function (data) {
+    //            var error = data.message;
+    //            if (error == "false") {
+    //                $('#validationmsgfortime').css("display", "block")
+    //                setTimeout(function () {
+    //                    $('#validationmsgfortime').css("display", "none")
+    //                }, 3000);
+    //            }
+    //        });
+    //}
+    $(document).ready(function () {
+        $("#close").on('click', function () {
+            $("#mySidenav").removeClass('view_detail');
+            $(".map_view_div").removeClass('full_map_view');
+            $('.map_view').find('i').attr('class', 'fa fa-map-marker');
+        });
+        $(".map_view").on('click', function () {
+            $(".map_view_div").toggleClass('full_map_view');
+
+            if ($(this).find('i').hasClass('fa fa-info')) {
+                $(this).find('i').attr('class', 'fa fa-map-marker');
+            }
+            else {
+                $(this).find('i').attr('class', 'fa fa-info');
+            }
+        });
+
+    });
+    $(document).ready(function () {
+
+        $("#layoutofschedular .emp-name").click(function () {
+
+            $(this).attr('id');
+            alert($(this).attr('id'));
+
+            alert("Handler for .click() called.");
+        });
+    });
+</script>
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTgMSXaaCOxWEWvHU-4QmeSXd1ZrL04TE&callback=initMap">
+</script>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog worker-info">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Employee Detail</h4>
+
+            </div>
+            <div class="modal-body edit-content ">
+                <div><label>Name:</label><span id="EmpName"></span></div>
+                <div><label>Phone:</label><span id="EmpPhone"></span></div>
+                <div>
+                    <label>Supported Services:</label><span id="Empquali"></span>
+                </div>
+                <div><label>Qualifications:</label><span id="EmpAttribute"></span></div>
+                <div><label>Notes:</label><span id="EmpDesc"></span></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+<div id="date-picker">
+</div>
+<div id='calendar'></div>
+<div class="validationmsgforwhile clearfix">
+    <h1 class="sedule-left">
+        Schedule for :
+        <span class="date-wrapper"><input type="text" name="datepicker" id="datepicker" readonly="true" class="TextBoxAsLabel" style="cursor:pointer;" /></span>
+
+        <input type="submit" value="Save" id="saveappointment" name="saveappointment" class="btn btn-default btn-success" />
+        @*<input type="submit" value="Save" id="reset" name="saveappointment" class="btn btn-default btn-success" />*@
+        <input type="submit" value="Reset" id="reset" class="btn btn-default btn-danger" />
+        @*<a href="javascript:" id="reset">cancel</a>*@
+    </h1>
+    <div class="sedule-right alert alert-danger" id="validationmsgfortime" style="display:none">Appointment time has already passed.</div>
+</div>
+<input type="hidden" id="SeletedDate" value="12/23/2016" />
+<div id="temoclone">
+    <div class="table-wrapper sheduleui" style="width:100%;" id="scheduledivid">
+
+        <table class='paymentTable webgrid-table sedule-tbl' id="layoutofschedular">
+            <thead>
+                <tr class="webgrid-header">
+                    <th id="0" style="text-align:right"> Time Period </th>
+                    <!-- ko foreach: apointmentwithtime -->
+                    <th data-bind="attr: { id: time_interval_id }">
+                        <div data-bind="text: timeinterval" class="thdiv" style="min-height:20px"></div>
+                    </th>
+                    <!-- /ko -->
+                </tr>
+                <tr class="hopper-wrap">
+                    <th style="height:120px;text-align:right; font-size: 15px; vertical-align: middle;" id="0">HOPPER</th>
+                    <!-- ko foreach: apointmentwithtime -->
+                    <td class="tdPayment traceID" style="height:120px">
+                        <!-- ko foreach: discription -->
+                        <div data-bind="attr: { id: appointment_id},text: desc,style:{ 'background-color' : color,'color': 'white','height':time,'line-height':time  }"
+                             ondblclick="openNav(this.id)" class="temp" style="cursor:pointer;border:2px solid #000;margin-top:1px;text-align:center;">
+                        </div>
+                        <!-- /ko -->
+                    </td>
+                    <!-- /ko -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: emp_list -->
+                <tr>
+                    <th data-bind="attr: { id: emp_id }" style="height:120px">
+                        <div class="emp-name" data-bind="attr: { id: emp_id },text: emp_name" data-toggle="modal" data-target="#myModal" style="cursor:pointer"></div>
+                        @*<div class="emp-name" data-bind="text: emp_name"></div>*@
+                        <div class="emp-worktypename-wrap">
+                            <div class="emp-worktypename" data-bind="text: workname"></div>
+                        </div>
+                    </th>
+                    <!-- ko foreach: timeintervaldata -->
+                    <td class="tdPayment traceID" style="height:120px">
+                        <!-- ko foreach: desctription -->
+                        <div data-bind="attr: { id: appointment_id,class:appointment_id},text: description,style:{ 'color': 'white','background-color' : color,'height':time,'line-height':time }"
+                             ondblclick="openNav(this.id)" style="cursor:pointer;border:2px solid #000;margin-top:1px;text-align:center; position:relative"></div>
+                        <!-- /ko -->
+                    </td>
+                    <!-- /ko -->
+                </tr>
+                <!-- /ko -->
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<input type="hidden" id="txtarray" />
+@*To show Right panel*@
+<div class="wrapper">
+    <div id="mySidenav" class="sidenav">
+        <div class="inner_view" id="innerID">
+            <div class="icon_header">
+                <a href="javascript:void(0)" id="close" class="closebtn"><i class="fa fa-arrow-right"></i></a>
+                <a href="javascript:void(0)" id="" class="map_view"><i class="fa fa-map-marker"></i></a>
+            </div>
+            <div class="map_view_div">
+                <div id="dvMap" style="width: 100%; height: 100%;"></div>
+            </div>
+            <div class="content_side_detail">
+                <div id="description"></div>
+                <h3>
+                    Schedule Information
+                </h3>
+                <div>Type: &nbsp;<strong><span id="servicetype"></span></strong></div>
+                <div>Window:&nbsp;<strong><span id="apptime"></span></strong></div>
+                <div>Duration:&nbsp;<strong><span id="apptimeduration"></span></strong></div>
+                <br />
+                <div>Notes:&nbsp;<strong><span id="appnote"></span></strong></div>
+                <br />
+                <table class="tb-req">
+                    <tr>
+                        <th>Requirement</th>
+                        <th>From</th>
+                    </tr>
+                    <tr>
+                        <td><div><span id="custattri"></span></div></td>
+                        <td>Customer</td>
+                    </tr>
+                    <tr>
+                        <td><span id="appattri"></span></td>
+                        <td>Appointment</td>
+                    </tr>
+                </table>
+                @*<div><label>Appointment Description:</label><span id="appdesc"></span></div>*@
+                <h3>
+                    Customer
+                </h3>
+                <div><strong><span id="custname"></span></strong></div>
+                <div>Phone:&nbsp;<strong><span id="custphoneno"></span></strong></div>
+                <div>Email:&nbsp;<strong><span id="custemailaddress"></span></strong></div>
+                <br />
+                <div>Address </div>
+                <div><strong><span id="custaddress"></span></strong></div>
+                @*<div><label>Customer Secondary Name:</label><span id="custseconadaryname"></span></div>
+                    <div><label>Customer Address:</label><span id="custaddress"></span></div>
+
+
+                    @*<div><label>Customer Attributes:</label><span id="custattri"></span></div>
+                        <div><label>Appointment Attributes:</label><span id="appattri"></span></div>*@
+                @*<h3>
+                        Employee
+                    </h3>
+                    <div><label>Employee Name:</label><span id="empname"></span></div>
+                    <div><label>Employee Attribute:</label><span id="empattribute"></span></div>
+                    <div><label>Employee Notes:</label><span id="empnote"></span></div>
+                    <br />
+                    <br />*@
+
+                <br />
+
+                <div>
+                    <input type="hidden" id="txtlat" />
+                    <input type="hidden" id="txtlon" />
+                    <div id="map_canvas" style="width: 100%; height: 200px">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialog" style="display: none">
+    <h3>Error</h3>
+    <p id="validationmsg"></p>
+    <input onclick="$.unblockUI();" type="button" value="Close" class="btn-danger" id="block-ui-dialog-btn">
+</div>
+<div id="success" style="display: none">
+    <h3>Success</h3>
+    <p id="validationmsg1"></p>
+    <input onclick="$.unblockUI();" type="button" value="Ok" class="btn-success" id="block-ui-dialog-btn">
+</div>
+
+<div class="overlay" align="center">
+    @*<img class="loading" src="http://bit.ly/pMtW1K" alt="" />*@
+    <img class="loading" src="~/img/loading.gif" alt="" />
+    <br />
+    <p class="color">Please wait while we are processing your request.</p>
+</div>
+
+
+

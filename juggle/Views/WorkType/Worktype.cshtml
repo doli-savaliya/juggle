@@ -1,0 +1,140 @@
+﻿
+
+@{
+    ViewBag.Title = "Worktype";
+
+    <style type="text/css">
+        .grid {
+            width: 100%;
+        }
+    </style>
+}
+@*<h2>Worktype</h2>*@
+
+
+<div style="padding:7px 0;">
+    @*<input type="button" value="Add New Worktype Category" id="create_worktype_parent" class="btn btn-default" data-toggle="modal" data-target="#myModal_create_category" />*@
+    <input type="button" value="Add New Worktype" id="create_worktype" class="btn btn-default" data-toggle="modal" data-target="#myModal_create" />
+    @*<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Large Modal</button>*@
+</div>
+<div style="width:100%;">
+
+    @{
+        WebGrid grid = new WebGrid(Model);
+        @grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+
+         mode: WebGridPagerModes.All,
+         firstText: "<< First",
+         previousText: "< Prev",
+         nextText: "Next >",
+         lastText: "Last >>",
+         columns: new[] {
+         grid.Column("name",header: "Name"),
+         grid.Column("category",header: "Category Name" ),
+         grid.Column("color",header: "Color", format:@<label style="background:@item.color;border:1">&nbsp;&nbsp;&nbsp;&nbsp;</label>),
+        grid.Column("Work_Id", header: "Action", canSort: false,
+     format: @<text>
+            @Html.Raw("<img src='/img/edit.png' title='Edit' id='edit-image' data-toggle='modal' data-target='#myModal_edit' data-editId=" + item.Work_Id + "  onclick='EditProduct(" + item.Work_Id + ")' />")
+            @Html.Raw("<img src='/img/delete.png' title='Delete'  onclick='DeleteProduct(" + item.Work_Id + ")'  />")
+    </text>
+          )
+        })
+    }
+
+
+    <div id="DivToAppendPartialVoew"></div>
+
+    <!--Add Modal -->
+    <div class="modal fade" id="myModal_create" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Work Type</h4>
+                </div>
+                <div class="modal-body" id="modal-body_create">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal_create_category" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Work Type Category</h4>
+                </div>
+                <div class="modal-body" id="modal-body_create_category">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--Edit Modal -->
+    <div class="modal fade" id="myModal_edit" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Work Type</h4>
+                </div>
+                <div class="modal-body" id="modal-body_Edit">
+
+                    <button type="button" class="close">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function EditProduct(Work_Id) {
+            //alert(Work_Id)
+            var ph = $("#modal-body_Edit");
+            ph.load("/WorkType/Worktype_Edit?Work_Id=" + Work_Id, function () {
+            });
+        }
+
+        function DeleteProduct(Work_Id) {
+            if (confirm("Do you want to delete Work type")) {
+                var data = { 'Work_Id': Work_Id }
+                $.post('/WorkType/Worktype_delete?Work_Id=' + Work_Id, function (data) {
+                    if (data == true)
+
+                        location = location.href;
+                    else
+
+                        location = location.href;
+                });
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#create_worktype").click(function () {
+                var div = $("#modal-body_create");
+                div.load("/WorkType/Create_Worktype", function () {
+                });
+            });
+            $("#create_worktype_parent").click(function () {
+                var div = $("#modal-body_create_category");
+                div.load("/WorkType/Create_Worktype_parent", function () {
+                });
+            });
+        });
+
+    </script>
+
+
+
+
+</div>

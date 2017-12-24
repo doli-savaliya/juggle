@@ -1,0 +1,205 @@
+﻿
+@model juggle.Models.tbl_user
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    @*<script src="~/scripts/Custom.js"></script>*@
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(function () {
+            $('body').on('keydown', '#firstName', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#lastName', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#address', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#phoneno', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#email', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#username', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+
+        });
+        $("input#username").on({
+            keydown: function (e) {
+                if (e.which === 32)
+                    return false;
+            },
+            change: function () {
+                this.value = this.value.replace(/\s/g, "");
+            }
+        });
+
+
+    </script>
+
+
+    <script type="text/javascript">
+        function showimagepreview(input) {
+            $('#button').show();
+            var ext = $('#file').val().split('.').pop().toLowerCase();
+            if (ext == "gif" || ext == "png" || ext == "jpg" || ext == "jpeg") {
+                if (input.files && input.files[0]) {
+                    var filerdr = new FileReader();
+                    filerdr.onload = function (e) {
+                        $('#imgprvw').attr('src', e.target.result);
+                    }
+                    filerdr.readAsDataURL(input.files[0]);
+                }
+            }
+            else {
+                $('#button').hide();
+                $('#imgprvw').removeAttr("src");
+            }
+
+
+        }
+    </script>
+</head>
+<body>
+    @using (Html.BeginForm("Edit_Supervisorprofile", "SupervisorProfile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.user_id)
+            @Html.HiddenFor(model => model.created_date)
+            @Html.HiddenFor(model => model.password)
+            @Html.HiddenFor(model => model.status)
+           @Html.HiddenFor(model => model.supervisor_id)
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.firstName, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2" for="firstName">First Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.firstName, new { htmlAttributes = new { @class = "form-control", @placeholder = "First Name is required", @maxlength = "50" } })
+                    @Html.ValidationMessageFor(model => model.firstName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.lastName, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2" for="lastname">Last Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.lastName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Last Name is required", @maxlength = "50" } })
+                    @Html.ValidationMessageFor(model => model.lastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.address, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2" for="Address">Address:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.address, new { htmlAttributes = new { @class = "form-control", @placeholder = "Address is required", @maxlength = "80" } })
+                    @Html.ValidationMessageFor(model => model.address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.phoneno, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2" for="Phone">Phone Number:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.phoneno, new { htmlAttributes = new { @class = "form-control", @maxlength = "13", @minlength = "10", @placeholder = "Phone No is required", @onkeypress = "return isNumber(event)" } })
+                    @Html.ValidationMessageFor(model => model.phoneno, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2" for="email">Email:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.username, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2" for="username">User Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control", @maxlength = "20", @minlength = "6", @placeholder = "User Name is required", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.username, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @*<div class="form-group">
+
+                    <label class="control-label col-md-2" for="username">Password:</label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.password, new { htmlAttributes = new { @class = "form-control", @type="password" , @readonly="readonly"} })
+
+                    </div>
+                </div>*@
+
+            @*<div class="form-group">
+                <label class="control-label col-md-2">Status:</label>
+                <div class="col-md-10">
+                    
+
+                    @Html.DropDownListFor(model => model.status, new SelectList(ViewBag.status1 as IEnumerable<SelectListItem>, "Value", "Text"), "-- Select Status -- ", new { @class = "form-control", @id = "status", @disabled = "disabled" })
+                    @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+
+                   
+                </div>
+            </div>*@
+
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Profile Picture:</label>
+                <div class="col-md-10">
+                    <input type="file" name="file" style="margin-bottom:10px" id="file" accept="image/*" onchange="showimagepreview(this);" />
+
+                    @Html.HiddenFor(model => model.profile_pict)
+                    <img src="~/Profile_Picture/@Url.Content(Model.profile_pict)" alt="No Image" style="height:60px;width:60px;" id="imgprvw" />
+                    @*@Html.TextBoxFor(m => m.profile_pict, new { type = "file" })
+                        @Html.ValidationMessageFor(m => m.profile_pict, "", new { @class = "text-danger" })*@
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" name="update" id="button" class="btn btn-default btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,153 @@
+﻿@model juggle.Models.tbl_user
+
+@{
+    ViewBag.Title = "cerate worker";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create Workers</title>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(function () {
+            $('body').on('keydown', '#firstName', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#lastName', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#address', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#phoneno', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#email', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#username', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+
+        });
+        $("input#username").on({
+            keydown: function (e) {
+                if (e.which === 32)
+                    return false;
+            },
+            change: function () {
+                this.value = this.value.replace(/\s/g, "");
+            }
+        });
+    </script>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+           
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="firstName">First Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.firstName, new { htmlAttributes = new { @class = "form-control", @placeholder = "First Name is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.firstName, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="lastname">Last Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.lastName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Last Name is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.lastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Address">Address:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.address, new { htmlAttributes = new { @class = "form-control", @placeholder = "Address is required", @maxlength = "80" } })
+                    @Html.ValidationMessageFor(model => model.address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Phone">Phone Number:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.phoneno, new { htmlAttributes = new { @class = "form-control", @placeholder = "Phone No is required", @maxlength = "13", @minlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.phoneno, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="email">Email:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email is required",@maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                    @*<label id="error_Email"></label>*@
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="username">User Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control", @maxlength = "20",@minlength="6", @placeholder = "User Name is required"} })
+                    @Html.ValidationMessageFor(model => model.username, "", new { @class = "text-danger" })
+                    @*<label id="error_username"></label>*@
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Status">Status:</label>
+                <div class="col-md-10">
+                    @*<select id="dllstatus" name="status_id" class="form-control" onchange="dropchange(); dropcolorchange();"></select>
+                        <input type="hidden" name="status_hidden" id="status_hidden" />*@
+
+                    @Html.DropDownListFor(model => model.status, new SelectList(ViewBag.status as IEnumerable<SelectListItem>, "Value", "Text"), "-- Select Status -- ", new { @class = "form-control", @id = "status" })
+                    @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.created_date, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+                    @Html.EditorFor(model => model.updated_date, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" name="Save" id="button" class="btn btn-default btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+
+</body>
+</html>

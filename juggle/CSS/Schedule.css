@@ -1,0 +1,7 @@
+﻿.schedule-header {
+  position: relative;
+  z-index: 999999;
+}
+.datepicker{
+   float:left; 
+}

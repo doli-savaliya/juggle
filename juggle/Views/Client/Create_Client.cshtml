@@ -1,0 +1,176 @@
+﻿@model juggle.Models.tbl_client
+
+@using (Html.BeginForm())
+{
+
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/bootstrap-multiselect.js"></script>
+    <link href="~/CSS/bootstrap-multiselect.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
+    <script>
+        $(function () {
+
+            $('#attribute_id').multiselect({
+                includeSelectAllOption: true,
+                onDropdownHide: function (event) {
+                    var value1 = $('#attribute_id').val();
+                  
+                    $('#attribute_id_multiple').val(value1);
+                }
+            });
+            $('body').on('keydown', '#name', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#contact_info', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#address', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#note', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+ //  $("#contact_info").mask("999-999-9999", { completed: function () {  });
+
+        });
+    </script>
+
+  
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="clientname">First Name:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_firstname, new { htmlAttributes = new { @class = "form-control", @id = "name", @placeholder = "First Name is required", @maxlength = "30" } })
+                @Html.ValidationMessageFor(model => model.client_firstname, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="clientname">Last Name:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_lastname, new { htmlAttributes = new { @class = "form-control", @id = "name", @placeholder = "Last Name is required", @maxlength = "30" } })
+                @Html.ValidationMessageFor(model => model.client_lastname, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="clientcontact">Phone Number:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_contact_info, new { htmlAttributes = new { @class = "form-control", @placeholder = "Phone No is required", @id = "contact_info", @maxlength = "15", @minlength = "10" } })
+                @Html.ValidationMessageFor(model => model.client_contact_info, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="clientcontact">Company Name:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_companyname, new { htmlAttributes = new { @class = "form-control", @placeholder = "Company Name is required", @maxlength = "30" } })
+                @Html.ValidationMessageFor(model => model.client_companyname, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="clientcontact">Secondary Name:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_secondaryname, new { htmlAttributes = new { @class = "form-control", @placeholder = "Secondary Name is required", @maxlength = "30"} })
+                @Html.ValidationMessageFor(model => model.client_secondaryname, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="email">Customer Email:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email is required", maxlength = "50" } })
+                @Html.ValidationMessageFor(model => model.client_email, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+       
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="clientname">Customer Address:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_address, new { htmlAttributes = new { @class = "form-control", @id = "address", @onchange = "getlatlong()", @placeholder = "Address is required", maxlength = "80" } })
+                @Html.ValidationMessageFor(model => model.client_address, "", new { @class = "text-danger" })
+                <input type="hidden" name="x_lat" id="x_lat" />
+                <input type="hidden" name="y_long" id="y_long" />
+                @*<input type="hidden" name="x_latitude" id="x_latitude" />
+                <input type="hidden" name="y_longitude" id="y_longitude" />*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="emptraveltime"> Attributes:</label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.attribute_id, new SelectList(ViewBag.attributelist as IEnumerable<SelectListItem>, "Value", "Text"), new { @class = "form-control", @multiple = "multiple" })
+                @Html.ValidationMessageFor(model => model.attribute_id, null, new { @class = "text-danger" })
+
+                <input type="hidden" id="attribute_id_multiple" name="attribute_id_multiple" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="clientname">Additional Notes:</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.client_note, new { htmlAttributes = new { @class = "form-control", @placeholder = "Note is required", @id = "note", maxlength = "100" } })
+                @Html.ValidationMessageFor(model => model.client_note, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            <label class="control-label col-md-2" for="clientname">Schedule:</label>
+            <div class="col-md-10">
+                <select id="dllschedule" name="schedule_id" class="form-control"></select>
+                <input type="hidden" name="schedule_hidden" id="schedule_hidden" />
+                
+            </div>
+        </div>*@
+
+
+        <div class="form-group">
+
+            <div class="col-md-10">
+                @*@Html.EditorFor(model => model.supervisor_id, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })*@
+                @Html.EditorFor(model => model.created_date, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+                @Html.EditorFor(model => model.updated_date, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+            </div>
+        </div>
+
+           @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" name="Save" onclick="getlatlong();" id="button" class="btn btn-default btn-success"  />
+            </div>
+        </div>
+
+        <div id="diverrormessage">
+            <label id="lblname" class="label label-danger"></label>
+        </div>
+        <div id="diverrormessageadd">
+            <label id="lbladd" class="label label-danger"></label>
+        </div>
+    </div>
+
+
+}
+
+<div>
+    @*@Html.ActionLink("Back to List", "Index")*@
+</div>

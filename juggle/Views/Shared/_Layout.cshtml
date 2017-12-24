@@ -1,0 +1,294 @@
+﻿@using juggle.Models;
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Juggle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+
+    <!--[if lt IE 9]>
+        <script src="js/html5shiv.min.js"></script>
+        <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="~/CSS/easy-responsive-tabs.css" media="screen">
+    <link rel="stylesheet" href="~/CSS/font-awesome.min.css" media="screen">
+    <link rel="stylesheet" href="~/CSS/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="~/CSS/reset.css" media="screen">
+    <link rel="stylesheet" href="~/CSS/master.css" media="screen">
+    <link rel="stylesheet" href="~/CSS/responsive.css" media="screen">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" media="screen">
+
+    <link href="~/Content/main.css" rel="stylesheet" media="screen" />
+    <script src="~/scripts/modernizr-2.6.2.js"></script>
+    <script src="~/js/jquery.cookie.js"></script>
+
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/jquery.ui.touch-punch.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            setNavigation();
+        });
+
+        $(document).ready(function () {
+
+            $(window).on('resize load', function () {
+
+                var window_w = $(window).width();
+                console.log(window_w)
+                if (window_w < 767) {
+                    $('body').addClass('full_view')
+                }
+                else {
+                    $('body').removeClass('full_view')
+                }
+            })
+        })
+
+        function setNavigation() {
+            var path = window.location.pathname;
+            path = path.replace(/\/$/, "");
+            path = decodeURIComponent(path);
+
+            $(".nav a").each(function () {
+                var href = $(this).attr('href');
+                if (path.substring(0, href.length) === href) {
+                    $(this).closest('li').addClass('active');
+                }
+            });
+        }
+
+        //$.post('/Account/gettimezonelist',
+        //function (data_usename) {
+        //    var error = data_usename.error;
+        //    if (error == "No") {
+        //        return false;
+        //    }
+        //    else {
+        //        var i = 0;
+
+        //        var cookiename = $.cookie("Timezone");
+        //        for (i = 0; i < data_usename.data.length; i++) {
+        //            if (cookiename == data_usename.data[i].time_zone_Id)
+        //            {
+        //                $('#timezone').append('<option selected  value="' + data_usename.data[i].time_zone_Id + '">' + data_usename.data[i].time_zone_displayname + '</option>');
+        //            }
+        //            else
+        //            {
+        //                $('#timezone').append('<option  value="' + data_usename.data[i].time_zone_Id + '">' + data_usename.data[i].time_zone_displayname + '</option>');
+        //            }
+        //        }
+        //        return true;
+        //    }
+        //});
+
+        //function updatetimezone() {
+        //    var timezoneid = $('#timezone').val();
+        //    $.post('/Account/updatetimezone?timezoneid=' + timezoneid + '',
+        //    function (data_usename) {
+        //        var error = data_usename.error;
+        //        if (error == "No") {
+        //            return false;
+        //        }
+        //        else {
+        //            return true;
+        //        }
+        //    });
+        //}
+    </script>
+
+
+</head>
+<body>
+
+
+    @{
+
+        jugglecontext dbcon = new jugglecontext();
+        int loginid = Convert.ToInt32(Session["User_Id"]);
+        var getloginuserdetail = (from a in dbcon.tbl_user
+                                  where a.user_id == loginid
+                                  select a).ToList();
+        if (getloginuserdetail.Count <= 0)
+        {
+            Response.Redirect(Url.Action("Login", "Account"));
+        }
+        if (Convert.ToInt32(getloginuserdetail[0].status) ==2)
+        {
+            Response.Redirect(Url.Action("Login", "Account"));
+        }
+        Session["profile_pict"] = getloginuserdetail[0].profile_pict.ToString();
+        Session["firstname"] = getloginuserdetail[0].firstName.ToString();
+    }
+
+
+    <div class="wrapper">
+        <div class="header-right">
+            <div class="left_logo">
+                @*<a href="#" class="logo" style="cursor:auto">*@
+                <img src="~/img/login-logo.png" alt="img" class="logo" />
+                @*</a>*@
+
+                <div class="menu_hand">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+            </div>
+            <div class="title"> BETA Product, use at your own risk. Thank you.</div>
+            @*<div style="display: inline-block;padding-right: 15px;padding-top: 13px;vertical-align: middle;">
+                    <select class="form-control" id="timezone" onchange="updatetimezone()">
+                        <option value="0">-- Select Timezone --</option>
+                    </select>
+                </div>*@
+            <a href="@Url.Action("Login", "Account")" class="logout"><i class="fa fa-power-off" aria-hidden="true"></i>Logout</a>
+            <a href="@Url.Action("changePassword", "Account")" class="logout"><i class="fa fa-unlock-alt" aria-hidden="true"></i>Change Password</a>
+        </div>
+
+
+
+    </div>
+    <div class="dash-tabber clearfix">
+        <ul class="resp-tabs-list nav">
+            @*<li><a href="#"><i class="fa fa-home"></i>Home</a></li>*@
+
+            <li>
+                <div class="profile">
+                    <div class="pro-img">
+
+                      
+                        @*<a href = "" > *@
+                        <img src="/Profile_Picture/@HttpContext.Current.Session["profile_pict"].ToString().TrimStart()" alt="img" />
+                        @*<img src="~/Profile_Picture/Chrysanthemum.jpg" />*@
+
+                        @*<img src="~/img/pro-icon.png" alt="img" />*@
+                        @*</a>*@
+                    </div>
+                    <div class="pro-name">
+                        Welcome,<br><span>@HttpContext.Current.Session["firstname"].ToString()</span>
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
+
+            </li>
+            @if (Convert.ToInt32(Session["User_Roll_Id"]) == 1 )
+            {
+                <li>
+                    <a href="@Url.Action("ManageSupervisors", "Supervisors")">
+                        <i class="fa fa-user"></i>Manage supervisor
+                    </a>
+                    @*@Html.ActionLink("MangeSuperwiser", "Manageuser", "Admin", null, null, "", null, null)*@
+
+                </li>
+
+            }
+            @if (Convert.ToInt32(Session["User_Roll_Id"]) == 2)
+            {
+                <li>
+                    <a href="@Url.Action("Index", "SupervisorProfile")">
+                        <i class="fa fa-user"></i>Supervisor Profile
+                    </a>
+                    @*@Html.ActionLink("MangeSuperwiser", "Manageuser", "Admin", null, null, "", null, null)*@
+
+                </li>
+
+            }
+
+            @if (Convert.ToInt32(Session["User_Roll_Id"]) == 2)
+            {
+
+                <li>
+                    <a href="@Url.Action("Index", "schedule")">
+                        <i class="fa fa-calendar"></i>Schedule
+                    </a>
+                    @*@Html.ActionLink("Schedule", "Schedule", "Schedule", null, null, "", null, null)*@
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Appointment", "AppointMent")">
+                        <i class="fa fa-briefcase"></i>Appointment
+                    </a>
+                    @*@Html.ActionLink("Work-Type", "WorkType", "Home", null, null, "", null, null)*@
+                </li>
+                <li>
+                    <a href="@Url.Action("Client","Client")">
+                        <i class="fa fa-user" aria-hidden="true"></i>Customer
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Employee", "Employee")">
+
+                        <i class="fa fa-user" aria-hidden="true"></i>Employee
+                    </a>
+
+                    @*@Html.ActionLink("Employee", "Employee", "Home", null, null, "", null, null)*@
+                </li>
+
+                <li>
+                    <a href="@Url.Action("EmployeeAvailability", "EmployeeAvailability")">
+                        <i class="fa fa-user" aria-hidden="true"></i>Employee Availability
+                    </a>
+                </li>
+
+                @*<li>
+                    <a href="@Url.Action("ManageWorkers", "Workers")">
+                        <i class="fa fa-users"></i>Manage Worker
+                    </a>
+
+                </li>*@
+                    <li>
+                        <a href="@Url.Action("Work_Type", "Work_Type")">
+                            <i class="fa fa-briefcase"></i>Service Type
+                        </a>
+                        @*@Html.ActionLink("Work-Type", "WorkType", "Home", null, null, "", null, null)*@
+                    </li>
+                    <li>
+                        <a href="@Url.Action("attribute", "Attribute")">
+                            <i class="fa fa-calendar"></i>Attributes
+                        </a>
+                        @*@Html.ActionLink("Schedule", "Schedule", "Schedule", null, null, "", null, null)*@
+                    </li>
+
+
+                    @* @Html.ActionLink("Client", "Client", "Client", null, null, "", null, null)</li>*@
+            }
+
+        </ul>
+        <div class="resp-tabs-container">
+            <div class="dash-content">
+                @RenderBody()
+
+                <div class="copy-right">Copyright &#169; 2017 - Juggle</div>
+            </div>
+
+        </div>
+
+    </div>
+    </div>
+    <!-- <script src = "http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" ></ script > -->
+    <script src="~/js/easy-responsive-tabs.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.menu_hand').on('click', function () {
+                $('body').toggleClass('full_view');
+            })
+            $('#verticalTab').easyResponsiveTabs({
+                type: 'vertical',
+                width: 'auto',
+                fit: true
+            });
+
+        });
+    </script>
+
+</body>
+</html>

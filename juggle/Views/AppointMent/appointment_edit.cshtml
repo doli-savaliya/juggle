@@ -1,0 +1,426 @@
+﻿@model juggle.Models.tbl_appointment
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit Appointment</title>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/scripts/jquery.timepicker.js"></script>
+    <script src="~/scripts/jquery.timepicker.min.js"></script>
+    <script>
+        $('#day').change(function () {
+            $("#day-error").hide();
+        });
+        $("#start_date").click(function () {
+            //$("#time_range_start").val("");
+            //$("#time_range_end").val("");
+            $("#time_range_start-error").hide();
+            $("#time_range_end-error").hide();
+        });
+    </script>
+    <script>
+        $("#start_date").click(function () {
+            //$("#time_range_start").val("");
+            //$("#time_range_end").val("");
+            $("#time_range_start-error").hide();
+            $("#time_range_end-error").hide();
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+
+            $("#start_date").datepicker({
+                minDate: new Date(),
+                numberOfMonths: 1,
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate());
+                    $("#end_date").datepicker("option", "minDate", dt);
+                }
+            });
+            $("#end_date").datepicker({
+                minDate: new Date(),
+                numberOfMonths: 1,
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate() - 1);
+                    //$("#start_date").datepicker("option", "maxDate", dt);
+                }
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $('body').on('keydown', '#description', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#recurring', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#day', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#start_date', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#end_date', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#time_range_start', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#time_range_end', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#notes', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+        });
+    </script>
+    <script>
+        $('#time_range_start').timepicker(
+            {
+                'timeFormat': 'H:i',
+                'minTime': '08:00am',
+                'maxTime': '10:00pm',
+                'step': 120,
+                'ampm': false
+            });
+
+
+        $('#time_range_end').timepicker({
+            'minTime': '10:00am',
+            'maxTime': '10:00pm',
+            'step': 120,
+            'timeFormat': 'H:i',
+        });
+
+
+        $("#time_range_start").keydown(function (e) {
+            e.preventDefault();
+            //event.preventDefault()
+        });
+
+
+        $("#time_range_end").keydown(function (e) {
+            e.preventDefault();
+        });
+
+
+        //$('#time_range_start').on('changeTime', function () {
+        //    var time = addTime($(this).val(), '02:00');
+        //    $('#time_range_end').timepicker('option', 'minTime', time);
+        //});
+
+
+
+        $('#time_range_start').on('changeTime', function () {
+            var time = addTime($(this).val(), '02:00');
+            $('#time_range_end').timepicker('option', 'minTime', time);
+        });
+
+        var splitTimeStr = function (t) {
+            var t = t.split(":");
+            t[0] = Number(t[0]);
+            t[1] = Number(t[1]);
+            return t;
+        };
+
+        var addTime = function (t1, t2) {
+            var t1Hr = splitTimeStr(t1)[0];
+            var t1Min = splitTimeStr(t1)[1];
+            var t2Hr = splitTimeStr(t2)[0];
+            var t2Min = splitTimeStr(t2)[1];
+            var rHr = t1Hr + t2Hr;
+            var rMin = t1Min + t2Min;
+            if (rMin >= 60) {
+                rMin = rMin - 60;
+                rHr = rHr + 1;
+            }
+            if (rMin < 10) rMin = "0" + rMin;
+            if (rHr < 10) rHr = "0" + rHr;
+            return "" + rHr + ":" + rMin;
+        };
+    </script>
+
+    <link href="~/CSS/jquery.timepicker.css" rel="stylesheet" />
+
+    <script src="~/js/bootstrap-multiselect.js"></script>
+    <link href="~/CSS/bootstrap-multiselect.css" rel="stylesheet" />
+
+    @*<script type="text/javascript">
+            $(document).ready(function () {
+                $('#day').multiselect();
+            });
+        </script>*@
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var currentdate = new Date($("#currentdate").val());
+            var appointmentdate = new Date($("#start_date").val());
+
+            if (currentdate > appointmentdate) {
+
+            }
+
+            $("#worktypeid option").each(function () {
+                var text = $("#hdnFlag").val();
+                if ($(this).text() == text) {
+                    $(this).attr('selected', 'selected');
+                }
+
+            });
+
+            $("#time_range_start").keydown(function (e) {
+                e.preventDefault();
+                //event.preventDefault()
+            });
+            $("#time_range_end").keydown(function (e) {
+                e.preventDefault();
+            });
+
+            $('#day').multiselect({
+                allSelectedText: 'All',
+                numberDisplayed: 7,
+                onDropdownHide: function (event) {
+                    var value1 = $('#day').val();
+                    $('#multiple').val(value1);
+                }
+            });
+
+            //Get value from db and set
+            var getValues = $('#edittime').val();
+            $('#multiple').val(getValues);
+
+            var str = getValues;
+            var str_array = str.split(',');
+            $("#day").val(str_array);
+            $("#day").multiselect("refresh");
+
+
+
+            $('#attribute_id').multiselect({
+                includeSelectAllOption: true,
+                onDropdownHide: function (event) {
+                    var value1 = $('#attribute_id').val();
+                    $('#attribute_iddata').val(value1);
+                }
+            });
+
+            var getValuesatri = $('#attribute_idmul').val();
+            $('#attribute_iddata').val(getValuesatri);
+
+            var stratri = getValuesatri;
+            var str_arrayatri = stratri.split(',');
+            $("#attribute_id").val(str_arrayatri);
+            $("#attribute_id").multiselect("refresh");
+
+            $("#recurring").click(function () {
+                if ($(this).is(":checked")) {
+                    $('#appointmentenddate').hide();
+                    $('#daydiv').show();
+                } else {
+                    $('#appointmentenddate').show();
+                    $('#daydiv').hide();
+                }
+            });
+
+            var chkid = document.getElementById('recurring').checked;
+            if (chkid) {
+                $("#appointmentenddate").hide();
+                $('#daydiv').show();
+            }
+
+            $("#worktypeid").change(function () {
+                var text = $("#worktypeid").val();
+                $("#worktypename").val(text);
+                var text = $("#worktypeid option:selected").text();
+                var String = text.substring(text.lastIndexOf("(") + 1, text.lastIndexOf("m"));
+
+                $("#time").val(String);
+
+            });
+
+        });
+    </script>
+
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.appointment_id)
+            @Html.HiddenFor(model => model.created_date)
+            @Html.HiddenFor(model => model.emp_id)
+            @Html.HiddenFor(model => model.time_interval_id)
+            <input type="hidden" value="@ViewBag.currentdate" id="currentdate" />
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Select Service:</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.work_id, new SelectList(ViewBag.CurrencyList as IEnumerable<SelectListItem>, "Value", "Text"), "Select WorkType Name", new { @class = "form-control", @id = "worktypename", @style = "display:none" })
+                    <input type="hidden" value="@ViewBag.hdnFlag" id="hdnFlag" />
+                    @Html.HiddenFor(model => model.time)
+                    @Html.DropDownList("worktypeid", new SelectList(ViewBag.CurrencyList as IEnumerable<SelectListItem>, "Value", "Text"), "Select WorkType Name", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.work_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.description, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2">Appointment Title:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.description, new { htmlAttributes = new { @class = "form-control", @maxlength = "300", @placeholder = "Please Enter Description" } })
+                    @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.recurring, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2">Recurring:</label>
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @*@Html.EditorFor(model => model.recurring, new { htmlAttributes = new { @class = "form-control", @placeholder = "Please Enter Recurring" } })*@
+                        @Html.CheckBoxFor(model => model.recurring, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.recurring, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="daydiv" style="display:none">
+                <label class="control-label col-md-2">Day:</label>
+                <div class="col-md-10">
+
+                    <select class="form-control" id="day" multiple="multiple">
+                        <option Value="1">Sunday</option>
+                        <option Value="2">Monday</option>
+                        <option Value="3">Tuesday</option>
+                        <option Value="4">Wednesday</option>
+                        <option Value="5">Thursday</option>
+                        <option Value="6">Friday</option>
+                        <option Value="7">Saturday</option>
+                    </select>
+                    <input type="hidden" id="multiple" name="multiple" />
+
+                    @Html.HiddenFor(model => model.day, new { @name = "edittime", @id = "edittime" })
+                    @Html.ValidationMessageFor(model => model.day, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.start_date, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2">Start Date:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.start_date, new { htmlAttributes = new { @class = "form-control", @readonly = "true", @placeholder = "Please Select Start Date", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.start_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" id="appointmentenddate">
+                @*@Html.LabelFor(model => model.end_date, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2">End Date:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.end_date, new { htmlAttributes = new { @class = "form-control", @readonly = "true", @placeholder = "Please Select End Date", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.end_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.time_range_start, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2">Time Range Start:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.time_range_start, new { htmlAttributes = new { @class = "form-control", @placeholder = "Please Select Start Time", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.time_range_start, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Time Range End:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.time_range_end, new { htmlAttributes = new { @class = "form-control", @placeholder = "Please Select End Time", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.time_range_end, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                @*@Html.LabelFor(model => model.notes, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <label class="control-label col-md-2">Notes:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.notes, new { htmlAttributes = new { @class = "form-control", @placeholder = "Please Enter Notes", @maxlength = "50" } })
+                    @Html.ValidationMessageFor(model => model.notes, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Attributes:</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.attribute_id, new SelectList(ViewBag.attributelist as IEnumerable<SelectListItem>, "Value", "Text"), new { @class = "form-control", @multiple = "multiple" })
+                    @Html.ValidationMessageFor(model => model.attribute_id, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.attribute_id, new { @name = "attribute_idmul", @id = "attribute_idmul" })
+                    <input type="hidden" id="attribute_iddata" name="attribute_iddata" />
+                </div>
+            </div>
+
+
+
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Customer Name:</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.client_id, new SelectList(ViewBag.client_list as IEnumerable<SelectListItem>, "Value", "Text"), "Select Customer", new { @class = "form-control", @id = "clientname" })
+                    @Html.ValidationMessageFor(model => model.client_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+
+</body>
+</html>

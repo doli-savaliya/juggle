@@ -1,0 +1,156 @@
+﻿
+
+@{
+    ViewBag.Title = "Worktype";
+
+    <style type="text/css">
+        .grid {
+            width: 100%;
+        }
+    </style>
+}
+
+<div style="padding:7px 0;">
+    @*<input type="button" value="Add New Worktype Category" id="create_worktype_parent" class="btn btn-default" data-toggle="modal" data-target="#myModal_create_category" />*@
+    <input type="button" value="Add New Worktype Category" id="create_worktype_category" class="btn btn-default" data-toggle="modal" data-target="#myModal_create_category" />
+    @*<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Large Modal</button>*@
+</div>
+<div style="width:100%;" class="table-wrapper">
+
+
+    @functions {
+        public static string Sorter(string columnName, string columnHeader, WebGrid grid)
+        {
+            string name_col = null;
+            //name_col = string.Format("{0} {1}", columnHeader, grid.SortColumn != columnName ?grid.SortDirection == SortDirection.Ascending ? "▲" :"▼" : string.Empty);
+            name_col = string.Format("{0} {1}", columnHeader, grid.SortColumn != "WorkType Category Name" ? grid.SortDirection == SortDirection.Ascending ? "▲" : "▼" : string.Empty);
+            return name_col;
+            //return string.Format("{0} {1}", columnHeader, grid.SortColumn == columnName ?
+            //  grid.SortDirection == SortDirection.Ascending ? "▲" :
+            //"▼" : string.Empty);
+        }
+    }
+
+
+    @{
+        if (Model != null)
+        {
+            WebGrid grid = new WebGrid(Model);
+            @grid.GetHtml(
+                tableStyle: "webgrid-table",
+                headerStyle: "webgrid-header",
+                footerStyle: "webgrid-footer",
+                alternatingRowStyle: "webgrid-alternating-row",
+                selectedRowStyle: "webgrid-selected-row",
+                rowStyle: "webgrid-row-style",
+
+                 mode: WebGridPagerModes.All,
+                 firstText: "<< First",
+                 previousText: "< Prev",
+                 nextText: "Next >",
+                 lastText: "Last >>",
+                 columns: new[] {
+                 grid.Column("worktypecategory_name",header: Sorter("worktypecategory_name", "WorkType Category Name", grid)),
+                 grid.Column("worktypecat_id", header: "Actions", canSort: false,
+                 format: @<text>
+                    @Html.Raw("<img style='cursor:pointer' src='/img/edit.png' title='Edit' id='edit-image' data-toggle='modal' data-target='#myModal_edit' data-editId=" + item.worktypecat_id + "  onclick='EditProduct(" + item.worktypecat_id + ")' />")
+                    @Html.Raw("<img style='cursor:pointer' id='delete"+item.worktypecat_id+"' src='/img/delete.png' title='Delete' data-val="+item.worktypecategory_name+" onclick='DeleteProduct(" + item.worktypecat_id + ")'  />")
+                </text>
+                  )
+                })
+        }
+        else
+        {
+            <table class="webgrid-table">
+                <thead>
+                    <tr class="webgrid-header">
+                        <th scope="col">
+                            WorkType Category Name
+                        </th>
+                        <th scope="col"> Actions </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="webgrid-row-style">
+                        <td colspan="2">No Record Found</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    }
+
+
+    <div id="DivToAppendPartialVoew"></div>
+
+    <!--Add Modal -->
+
+
+    <div class="modal fade" id="myModal_create_category" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add WorkType Category</h4>
+                </div>
+                <div class="modal-body" id="modal-body_create_category">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--Edit Modal -->
+    <div class="modal fade" id="myModal_edit" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit WorkType Category</h4>
+                </div>
+                <div class="modal-body" id="modal-body_Edit">
+
+                    <button type="button" class="close">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function EditProduct(Work_Id) {
+            //alert(Work_Id)
+            var ph = $("#modal-body_Edit");
+            ph.load("/Work_Type_Category/Worktype_Category_Edit?worktypecat_id=" + Work_Id, function () {
+            });
+        }
+
+        function DeleteProduct(Work_Id) {
+            //if (confirm(" Do you want to delete Work type")) {
+            var name = $("#delete" + Work_Id).attr("data-val");
+            if (confirm(" Are you sure you want to delete this work type category?")) {
+                var data = { 'Work_Id': Work_Id }
+                $.post('/Work_Type_Category/Worktype_category_delete?worktypecat_id=' + Work_Id, function (data) {
+                    if (data == true)
+                        location = location.href;
+                    else
+                        location = location.href;
+                });
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#create_worktype_category").click(function () {
+                var div = $("#modal-body_create_category");
+                div.load("/Work_Type_Category/Create_Worktype_Category", function () {
+                });
+            });
+        });
+
+    </script>
+
+
+
+
+</div>

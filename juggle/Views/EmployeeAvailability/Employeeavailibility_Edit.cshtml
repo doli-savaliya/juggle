@@ -1,0 +1,191 @@
+﻿@model juggle.Models.tbl_employee_availability
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Employeeavailibility_Edit</title>
+</head>
+<body>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Client Scripts/mvcfoolproof.unobtrusive.min.js"></script>
+    <script src="~/scripts/jquery.timepicker.js"></script>
+    <script src="~/scripts/jquery.timepicker.min.js"></script>
+    <link href="~/CSS/jquery.timepicker.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        $(function () {
+            $("#start_date").datepicker({
+                minDate: new Date(),
+                numberOfMonths: 1,
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate());
+                    $("#end_date").val($("#start_date").val());
+                    $("#end_date").datepicker("option", "minDate", dt);
+                }
+            });
+            $("#end_date").datepicker({
+                minDate: new Date(),
+                numberOfMonths: 1,
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate() - 1);
+                    //$("#start_date").datepicker("option", "maxDate", dt);
+                }
+            });
+        });
+
+        $('#time_range_start').timepicker(
+               {
+                   'timeFormat': 'H:i',
+                   'minTime': '08:00am',
+                   'maxTime': '08:00pm',
+                   'step': 120,
+                   'ampm': false
+               });
+
+        $('#time_range_end').timepicker({
+            'minTime': '10:00am',
+            'maxTime': '10:00pm',
+            'step': 120,
+            'timeFormat': 'H:i',
+        });
+
+        $('#time_range_start').on('changeTime', function () {
+            var time = addTime($(this).val(), '02:00');
+            $('#time_range_end').val(time);
+            $('#time_range_end').timepicker('option', 'minTime', time);
+        });
+
+
+        var splitTimeStr = function (t) {
+            var t = t.split(":");
+            t[0] = Number(t[0]);
+            t[1] = Number(t[1]);
+            return t;
+        };
+
+        var addTime = function (t1, t2) {
+            var t1Hr = splitTimeStr(t1)[0];
+            var t1Min = splitTimeStr(t1)[1];
+            var t2Hr = splitTimeStr(t2)[0];
+            var t2Min = splitTimeStr(t2)[1];
+            var rHr = t1Hr + t2Hr;
+            var rMin = t1Min + t2Min;
+            if (rMin >= 60) {
+                rMin = rMin - 60;
+                rHr = rHr + 1;
+            }
+            if (rMin < 10) rMin = "0" + rMin;
+            if (rHr < 10) rHr = "0" + rHr;
+            return "" + rHr + ":" + rMin;
+        };
+
+        $("#time_range_start").keypress(function (e) {
+            e.preventDefault();
+        });
+
+
+        $("#time_range_end").keypress(function (e) {
+            e.preventDefault();
+        });
+       
+
+
+    // stop spce as first character
+        $('body').on('keydown', '#start_date', function (e) {
+            console.log(this.value);
+            if (e.which === 32 && e.target.selectionStart === 0) {
+                return false;
+            }
+        });
+        $('body').on('keydown', '#end_date', function (e) {
+            console.log(this.value);
+            if (e.which === 32 && e.target.selectionStart === 0) {
+                return false;
+            }
+        });
+        $('body').on('keydown', '#time_range_start', function (e) {
+            console.log(this.value);
+            if (e.which === 32 && e.target.selectionStart === 0) {
+                return false;
+            }
+        });
+        $('body').on('keydown', '#time_range_end', function (e) {
+            console.log(this.value);
+            if (e.which === 32 && e.target.selectionStart === 0) {
+                return false;
+            }
+        });
+    </script>
+
+
+
+
+
+    
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.empavailability_id)
+            @Html.HiddenFor(model => model.created_date)
+            
+    
+            <div class="form-group">
+                <label class="control-label col-md-2"> Start Date:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.start_date, new { htmlAttributes = new { @class = "form-control", @readonly = "true", @placeholder = "Please Select Start Date",@type="text"  } })
+                    @Html.ValidationMessageFor(model => model.start_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2"> End Date:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.end_date, new { htmlAttributes = new { @class = "form-control", @readonly = "true", @placeholder = "Please Select End Date",@type="text"  } })
+                    @Html.ValidationMessageFor(model => model.end_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Time Range Start:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.time_range_start, new { htmlAttributes = new { @class = "form-control", @placeholder = "Please Select Start Time", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.time_range_start, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Time Range End:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.time_range_end, new { htmlAttributes = new { @class = "form-control", @placeholder = "Please Select End Time", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.time_range_end, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Employee Name:</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.emp_id, new SelectList(ViewBag.emp_list as IEnumerable<SelectListItem>, "Value", "Text"), "Select Employee", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.emp_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+</body>
+</html>

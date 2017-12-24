@@ -1,0 +1,86 @@
+﻿@model juggle.Models.tbl_user
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login-Juggle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/custom.js"></script>
+    <link href="~/CSS/bootstrap.min.css" rel="stylesheet" media="screen" />
+    <link rel="stylesheet" href="~/CSS/reset.css" media="screen">
+    <link rel="stylesheet" href="~/CSS/master.css" media="screen">
+    <link rel="stylesheet" href="~/CSS/responsive.css" media="screen">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet">
+    <style>
+        .login-right .validation-summary-errors {
+            background: #fff;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+            .login-right .validation-summary-errors li {
+                padding-bottom: 0px;
+            }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+
+        <div class="container">
+            <div class="main-content">
+
+                <div class="login-logo">@*<a href="#">*@<img src="~/img/login-logo.png" alt="img" />@*</a>*@</div>
+                <div class="login-wrap clearfix">
+                    <div class="login-left">
+                        <div class="login-txt">Login To Access...</div>
+                        <img class="lock" src="~/img/lock.png" />
+
+                    </div>
+                    @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="login-right">
+                        <div class="field-wrap">
+                            @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "txt", @placeholder = "User Name" } })
+                            @Html.ValidationMessageFor(model => model.username, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="field-wrap">
+                            @Html.EditorFor(model => model.password, new { htmlAttributes = new { @class = "txt", @type = "password", @placeholder = "Password" } })
+                            @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="forgat-pass">
+                            <a href="@Url.Action("ForgotPassword", "Account")">
+                                Forgot Password?
+                            </a>
+                        </div>
+                        @*<div class="forgat-pass"><a href="~/Views/Account/ForgotPassword.cshtml">Forgot Password?</a></div>*@
+                        <div class="field-wrap">
+                            <input type="submit" value="Login" name="Login" class="sub-btn" />
+                        </div>
+                        <div class="invalid_login">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                }
+                    <div class="login-right">
+                        <div class="invalid_login">
+                            @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

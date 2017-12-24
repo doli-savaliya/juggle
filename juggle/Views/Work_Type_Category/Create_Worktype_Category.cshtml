@@ -1,0 +1,48 @@
+﻿@model juggle.Models.tbl_worktype_category
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Worktype Category</title>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(function () {
+            $('body').on('keydown', '#worktypecategory_name', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+           
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="control-label col-md-2"> Work Type Category Name: </label>
+                @Html.HiddenFor(model => model.created_date)
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.worktypecategory_name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Worktype category name is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.worktypecategory_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+
+</body>
+</html>

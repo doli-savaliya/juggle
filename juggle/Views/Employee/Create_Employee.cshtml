@@ -1,0 +1,234 @@
+﻿@model juggle.Models.tbl_employee_info
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/scripts/jquery.timepicker.js"></script>
+    <script src="~/scripts/jquery.timepicker.min.js"></script>
+    <script src="~/js/bootstrap-multiselect.js"></script>
+    <link href="~/CSS/bootstrap-multiselect.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $('#emp_traveltime').timepicker(
+               {
+                   'timeFormat': 'H:i',
+                   'minTime': '12:00am',
+                   'ampm': false,
+               });
+
+
+    </script>
+    <link href="~/CSS/jquery.timepicker.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
+    <script>
+        $(function () {
+
+            $('#emp_qualifiedservicetypes').multiselect({
+                includeSelectAllOption: true,
+                onDropdownHide: function (event) {
+                    var value1 = $('#emp_qualifiedservicetypes').val();
+                    $('#emp_qualifiedservicetypes_multiple').val(value1);
+                }
+            });
+            $('#attribute_id').multiselect({
+                includeSelectAllOption: true,
+                onDropdownHide: function (event) {
+                    var value1 = $('#attribute_id').val();
+                    $('#attribute_id_multiple').val(value1);
+                }
+            });
+
+            $("#emp_scheduleavailability").datepicker({
+                minDate: new Date(),
+                numberOfMonths: 1,
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate());
+                }
+            });
+
+            $('body').on('keydown', '#emp_firstname', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#emp_lastname', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#phone', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#emp_googlecalendarID', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+
+            $('body').on('keydown', '#emp_scheduleavailability', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+
+            $('body').on('keydown', '#emp_note', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+
+            $('body').on('keydown', '#emp_transportion', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+
+			$("#phone").mask("999-999-9999", { completed: function () {  } });
+        });
+        function NumberOnly() {
+            var AsciiValue = event.keyCode
+            if ((AsciiValue >= 48 && AsciiValue <= 57) || (AsciiValue == 8 || AsciiValue == 127))
+                event.returnValue = true;
+            else
+                event.returnValue = false;
+        }
+
+    </script>
+    
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <meta name="viewport" content="width=device-width" />
+        <div class="form-horizontal">
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Employeename">First Name:</label>
+                <div class="col-md-10">
+
+                    @Html.EditorFor(model => model.emp_firstname, new { htmlAttributes = new { @class = "form-control", @placeholder = "First Name is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.emp_firstname, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Employeename">Last Name:</label>
+                <div class="col-md-10">
+
+                    @Html.EditorFor(model => model.emp_lastname, new { htmlAttributes = new { @class = "form-control", @placeholder = "Last Name is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.emp_lastname, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="empcontactinfo"> Phone Number:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.emp_contactinfo, new { htmlAttributes = new { @class = "form-control", @id = "phone", @placeholder = "Phone No is required", @maxlength = "15", @minlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.emp_contactinfo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-md-2"> Google Calendar:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.emp_googlecalendarID, new { htmlAttributes = new { @class = "form-control", @id = "phone", @placeholder = "Google Calendar is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.emp_googlecalendarID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2"> Password:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.emp_password, new { htmlAttributes = new { @class = "form-control",  @placeholder = "Password is required", @maxlength = "30", @type = "password" } })
+                    @Html.ValidationMessageFor(model => model.emp_password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Mode of Transportation:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.emp_transportion, new { htmlAttributes = new { @class = "form-control", @placeholder = "Employee Transportation is required", @maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.emp_transportion, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            @*<div class="form-group">
+                <label class="control-label col-md-2">Schedule Availability:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.emp_scheduleavailability, new { htmlAttributes = new { @class = "form-control",  @placeholder = "Employee Scheduleav Availability is required", @readonly = "true" } })
+                    @Html.ValidationMessageFor(model => model.emp_scheduleavailability, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="emptraveltime"> Qualified Service Types:</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.emp_qualifiedservicetypes, new SelectList(ViewBag.emp_qualifiedservicetypeslist as IEnumerable<SelectListItem>, "Value", "Text"), new { @class = "form-control", @multiple = "multiple" })
+                    @Html.ValidationMessageFor(model => model.emp_qualifiedservicetypes, null, new { @class = "text-danger" })
+                    <input type="hidden" id="emp_qualifiedservicetypes_multiple" name="emp_qualifiedservicetypes_multiple" />
+
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="emptraveltime"> Attributes:</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.attribute_id, new SelectList(ViewBag.attributelist as IEnumerable<SelectListItem>, "Value", "Text"), new { @class = "form-control", @multiple = "multiple" })
+                    @Html.ValidationMessageFor(model => model.attribute_id, null, new { @class = "text-danger" })
+
+                    <input type="hidden" id="attribute_id_multiple" name="attribute_id_multiple" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="emptraveltime"> Additional Notes:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.emp_note, new { htmlAttributes = new { @class = "form-control", @placeholder = "Additional Notes" } })
+                    @Html.ValidationMessageFor(model => model.emp_note, null, new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.emp_id, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+                    @Html.EditorFor(model => model.user_id, new { htmlAttributes = new { @class = "form-control", @type = "hidden", @value = Session["User_Id"] } })
+                    @Html.EditorFor(model => model.created_date, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+                    @Html.EditorFor(model => model.updated_date, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+
+                </div>
+            </div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" id="submit" value="Save" name="Create" class="btn btn-default btn-success" />
+                </div>
+            </div>
+        </div>
+       
+    }
+   
+    <div>
+        @*@Html.ActionLink("Back to List", "Index")*@
+    </div>
+</body>
+</html>

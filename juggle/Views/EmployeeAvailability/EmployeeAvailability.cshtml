@@ -1,0 +1,120 @@
+﻿
+
+@{
+    ViewBag.Title = "Employee";
+}
+
+<div style="padding:7px 0;">
+    <input type="button" value="Add New Employee Availability" id="create_employeeavailibity" class="btn btn-default" data-toggle="modal" data-target="#myModal_create" />
+</div>
+<div style="width:100%;" class="table-wrapper">
+    @functions {
+        public static string Sorter(string columnName, string columnHeader, WebGrid grid)
+        {
+            string name_col = null;
+            name_col = string.Format("{0} {1}", columnHeader, grid.SortColumn != "Employee Name" ? grid.SortDirection == SortDirection.Ascending ? "▲" : "▼" : string.Empty);
+            return name_col;
+        }
+    }
+
+    @{
+        WebGrid grid = new WebGrid(Model);
+        @grid.GetHtml(
+       tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        firstText: "<< First",
+        previousText: "< Prev",
+        nextText: "Next >",
+        lastText: "Last >>",
+        columns: new[] {
+        grid.Column("Empname",header: Sorter("emp_id", "Employee Name", grid)),
+        grid.Column("start_date",format: (item) => string.Format("{0:dd-MMM-yyyy}", item.start_date), header: Sorter("start_date", "Start Date", grid)),
+        grid.Column("end_date",format: (item) => string.Format("{0:dd-MMM-yyyy}", item.end_date), header: Sorter("end_date", "End Date", grid)),
+        grid.Column("time_range_start",format: (item) => string.Format("{0:dd-MMM-yyyy}", item.time_range_start), header: Sorter("time_range_start", "Start Time", grid)),
+        grid.Column("time_range_end",format: (item) => string.Format("{0:dd-MMM-yyyy}", item.time_range_end), header: Sorter("time_range_end", "End Time", grid)),
+        grid.Column("empavailability_id", header: "Actions", canSort:false,
+        format: @<text>
+            @Html.Raw("<img style='cursor:pointer' src='/img/edit.png' title='Edit' id='edit-image' data-toggle='modal' data-target='#myModal_edit' data-editId="+ item.empavailability_id  +"  onclick='EditProduct("+item.empavailability_id+")' />")
+            @Html.Raw("<img style='cursor:pointer' src='/img/delete.png' title='Delete'onclick='DeleteProduct("+ item.empavailability_id +")'  />")
+        </text>
+        )
+     })
+
+    }
+</div>
+<div id="DivToAppendPartialVoew"></div>
+<!--Add Modal -->
+<div class="modal fade" id="myModal_create" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add New Employee Availability</h4>
+            </div>
+            <div class="modal-body" id="modal-body_create">
+            </div>
+        </div>
+    </div>
+</div>
+<!--Edit Modal -->
+<div class="modal fade" id="myModal_edit" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Employee Availability</h4>
+            </div>
+            <div class="modal-body" id="modal-body_Edit">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#create_employeeavailibity").click(function () {
+            var div = $("#modal-body_create");
+            var cookievalue = $.cookie('AccountCookies');
+            if (cookievalue = "" || cookievalue.length <= 0) {
+                location.reload();
+            }
+            else {
+                div.load("/EmployeeAvailability/Create_EmployeeSchedule", function () {
+                });
+            }
+        });
+    });
+
+    function EditProduct(empavailability_id) {
+        var ph = $("#modal-body_Edit");
+        var cookievalue = $.cookie('AccountCookies');
+        if (cookievalue = "" || cookievalue.length <= 0) {
+            location.reload();
+        }
+        else {
+            ph.load("/EmployeeAvailability/Employeeavailibility_Edit?empavailability_id=" + empavailability_id, function () {
+            });
+        }
+    }
+    function DeleteProduct(empavailability_id) {
+        if (confirm("Are you sure you want to delete this Employee Availability?")) {
+            var data = { 'empavailability_id': empavailability_id }
+            $.post('/EmployeeAvailability/Employeeavailibility_delete?empavailability_id=' + empavailability_id, function (data) {
+                if (data == true)
+                    location = location.href;
+                else
+                    location = location.href;
+            });
+        }
+    }
+
+
+
+</script>

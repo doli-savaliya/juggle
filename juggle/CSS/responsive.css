@@ -1,0 +1,181 @@
+.dash-tabber ul.resp-tabs-list::before {
+  background: #165EA4;
+  bottom: 0;
+  content: "";
+  display: block;
+  left: 0;
+  position: fixed;
+  top: 60px;
+  width: 230px;
+  z-index: -1;
+}
+
+body.full_view .dash-tabber ul.resp-tabs-list::before {
+  width: 65px;
+}
+@media screen and (max-width:1400px) {
+
+    .login-logo {
+        padding-bottom: 30px;
+        padding-top: 30px;
+    }
+    .login-logo img {
+      max-width: 200px;
+    }
+    .login-wrap{padding: 20px 0; height:400px;}
+    .login-left{padding-top: 40px;}
+    .login-right{padding: 40px 77px 0;}
+
+
+}
+
+@media screen and (max-width:1280px) {
+
+    .table-wrapper{overflow-y: auto;}
+     .dash-tabber{width: 100%;}
+
+
+}
+
+@media screen and (max-width:1023px) { 
+   
+	.container, .content, .main-content { width: 100%;}
+    ul.resp-tabs-list{display: block;}
+    .resp-tabs-container .dash-content {padding: 0 15px;}
+    .dash-tabber .resp-tabs-list li a{padding:10px !important; font-size: 12px;}
+    .dash-tabber .resp-tabs-list li i {font-size: 18px; margin-right: 10px; width: 20px;}
+    .dash-tabber li.active::after {
+        border-bottom: 12px solid rgba(0, 0, 0, 0);
+        border-right: 12px solid #eff8ff;
+        border-top: 12px solid rgba(0, 0, 0, 0);
+    }
+
+	.dash-header {height: auto; float: left; width: 100%; margin-bottom: 15px;}
+	
+	.dash-tabber {float: left; padding: 0 0px 0 0; position: static;}
+/*	.header-right {height: auto; width: 100%;}*/
+	/*.logout {margin-right: 15px; margin-top: 25px;}*/
+	.resp-vtabs .resp-tabs-container{height: auto; width: 100%; margin-bottom: 20px;}
+	h2.resp-accordion{font-size: 18px;
+	  font-weight: normal;
+	  border-bottom: 1px solid #043a6d;
+	  padding: 10px 10px 10px 20px; background-color: #165ea4;
+	  color: #002446;}
+	h2.resp-accordion i {
+	  font-size: 26px;
+	  margin-right: 20px;
+	  vertical-align: top;
+	  width: 27px;
+	  text-align: center;
+	}
+	h2.resp-accordion img{margin-right: 20px;
+	  vertical-align: top;
+	  width: 27px;}
+	h2.resp-tab-active.resp-accordion{background-color: #165ea4 !important; padding: 10px 10px 10px 20px !important; color: #FFF;}
+}
+
+@media screen and (min-width:768px) {
+
+    .main-menu, .manu-handler{display: none;}
+}
+
+@media screen and (max-width:767px) { 
+
+   
+    
+    .webgrid-table td, .webgrid-table th{white-space: nowrap;}
+
+    .wrapper{overflow: hidden;}
+
+     ul.resp-tabs-list{display: block;}
+     .manu-handler {
+  height: 26px;
+  position: absolute;
+  right: 15px;
+  top: 34px;
+  width: 35px;
+}
+     .manu-handler > span {
+  background-color: #fff;
+  float: left;
+  height: 2px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+    .main-menu {
+  background-color: #043a6d;
+  position: absolute;
+  right: -100%;
+  top: 100px;
+  z-index: 1;
+  -webkit-transition: all 100ms ease-out 0s;
+    -moz-transition: all 100ms ease-out 0s;
+    -o-transition: all 100ms ease-out 0s;
+    transition: all 100ms ease-out 0s;
+}
+
+    .main-menu.menu-open{right: 0;}
+
+    .main-menu > li {
+  padding-bottom: 5px;
+}
+    .main-menu a {
+  color: #fff;
+  display: block;
+  padding: 5px 10px;
+}
+    .main-menu i {
+  margin-right: 10px;
+  text-align: center;
+  width: 20px;
+}
+
+
+	.login-left {
+	  border: medium none;
+	  float: none;
+	  height: auto;
+	  padding: 0;
+	  width: auto;
+	}
+	.login-wrap{height: auto;}
+	.login-right {
+	  float: none;
+	  padding: 25px 20px 0;
+	  width: auto;
+	}
+	.dash-content {padding: 20px;}
+
+    /*.dash-tabber ul.resp-tabs-list, .dash-tabber .resp-tabs-container{height: auto; width: 100%;}
+    .resp-tabs-container .dash-content{padding: 0;}
+    .dash-tabber ul.resp-tabs-list { background-color: transparent; height: auto; width: 100%;}
+    .dash-tabber .resp-tabs-list li {background-color: #165ea4; display: inline-block; float: none; margin-bottom: 5px !important; margin-right: 3px; width: auto;}
+    .dash-tabber li.active::after{display: none;}
+    .dash-tabber .resp-tabs-list li a:hover, .dash-tabber .resp-tabs-list li a:focus, .dash-tabber .resp-tabs-list li.active a{background-color: #000;}*/
+   
+    .webgrid-table {font-size: 12px !important;}
+    .dash-tabber ul.resp-tabs-list::before,
+    .dash-tabber ul.resp-tabs-list,
+    .left_logo {
+        width:190px;
+    }
+    #myModal_create .multiselect{
+        max-width:260px;
+        overflow:hidden;
+    }
+    #myModal_create .multiselect-container > li > a > label.radio, #myModal_create .multiselect-container > li > a > label.checkbox{
+        display: block;
+        line-height: 12px;
+        margin: 0;
+        min-height: 0;
+        padding: 7px 29px;
+    }
+    #myModal_create .multiselect-container > li > a > label > input[type="checkbox"]{
+        margin:0;
+    }
+    .multiselect-container > li:after{
+        display:none !important;
+    }
+    .modal-open{width:100% !important;}
+}

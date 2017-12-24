@@ -1,0 +1,204 @@
+﻿@model juggle.Models.tbl_client
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/bootstrap-multiselect.js"></script>
+    <link href="~/CSS/bootstrap-multiselect.css" rel="stylesheet" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
+
+    <script>
+        $(function () {
+            //$("#x_latitude").val($("#x_lat").val());
+            //$("#y_longitude").val($("#y_long").val());
+            $('#attribute_id').multiselect({
+                includeSelectAllOption: true,
+                onDropdownHide: function (event) {
+                    var value1 = $('#attribute_id').val();
+                    $('#attribute_id_multiple').val(value1);
+                }
+            });
+
+            //Get value from db and set
+            var getValues = $('#attribute_id_multiplehid').val();
+            $('#attribute_id_multiple').val(getValues);
+
+            var str = getValues;
+            var str_array = str.split(',');
+            $("#attribute_id").val(str_array);
+            $("#attribute_id").multiselect("refresh");
+
+
+
+            $('body').on('keydown', '#name', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#contact_info', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#address', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+            $('body').on('keydown', '#note', function (e) {
+                console.log(this.value);
+                if (e.which === 32 && e.target.selectionStart === 0) {
+                    return false;
+                }
+            });
+
+			//   $("#contact_info").mask("999-999-9999", { completed: function () { } });
+
+        });
+    </script>
+
+
+
+
+
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.client_id)
+            @Html.HiddenFor(model => model.client_code)
+            @Html.HiddenFor(model => model.user_id)
+
+            @*@Html.HiddenFor(model => model.supervisor_id)*@
+            @Html.HiddenFor(model => model.created_date)
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="clientname">First Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_firstname, new { htmlAttributes = new { @class = "form-control", @id = "name", @placeholder = "First Name is required", maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.client_firstname, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="clientname">Last Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_lastname, new { htmlAttributes = new { @class = "form-control", @id = "name", @placeholder = "Last Name is required", maxlength = "30" } })
+                    @Html.ValidationMessageFor(model => model.client_lastname, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="clientcontact">Phone Number:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_contact_info, new { htmlAttributes = new { @class = "form-control", @placeholder = "Phone No is required", @id = "contact_info", @maxlength = "15", @minlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.client_contact_info, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="clientcontact">Company Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_companyname, new { htmlAttributes = new { @class = "form-control", @placeholder = "Company Name is required", @maxlength = "50"} })
+                    @Html.ValidationMessageFor(model => model.client_companyname, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="clientcontact">Secondary Name:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_secondaryname, new { htmlAttributes = new { @class = "form-control", @placeholder = "Company Name is required", @maxlength = "50"} })
+                    @Html.ValidationMessageFor(model => model.client_secondaryname, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="email">Customer Email:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email is required", maxlength = "50" } })
+                    @Html.ValidationMessageFor(model => model.client_email, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="clientname">Customer Address:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_address, new { htmlAttributes = new { @class = "form-control", @id = "address", @onchange = "getlatlong()", @placeholder = "Address is required", maxlength = "80" } })
+                    @Html.ValidationMessageFor(model => model.client_address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="emptraveltime"> Attributes:</label>
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.attribute_id, new SelectList(ViewBag.attributelist as IEnumerable<SelectListItem>, "Value", "Text"), new { @class = "form-control", @multiple = "multiple" })
+                    @Html.ValidationMessageFor(model => model.attribute_id, null, new { @class = "text-danger" })
+                    <input type="hidden" id="attribute_id_multiple" name="attribute_id_multiple" />
+                    @Html.HiddenFor(model => model.attribute_id, new { @name = "attribute_id_multiplehid", @id = "attribute_id_multiplehid" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="clientname">Additional Notes:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.client_note, new { htmlAttributes = new { @class = "form-control", @placeholder = "Note is required", @id = "note", maxlength = "100" } })
+                    @Html.ValidationMessageFor(model => model.client_note, "", new { @class = "text-danger" })
+
+
+                    @Html.EditorFor(model => model.x_lat, new { htmlAttributes = new { @class = "form-control", @type = "hidden", @name = "x_lat", @id = "x_lat" } })
+                    @Html.EditorFor(model => model.y_long, new { htmlAttributes = new { @class = "form-control", @type = "hidden", @name = "y_long", @id = "y_long" } })
+                    @*<input type="hidden" name="x_latitude"  id="x_latitude"/>
+                    <input type="hidden" name="y_longitude" id="y_longitude" />*@
+                  
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" name="update" onclick="getlatlong();" class="btn btn-default btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @*@Html.ActionLink("Back to List", "Index")*@
+    </div>
+    @*<script>
+        //elementload event
+        $(document).ready(function () {
+            var geocoder = new google.maps.Geocoder();
+            var address = document.getElementById("address").value;
+            //if address existing
+            if (address != "") {
+                geocoder.geocode({ 'address': address }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var latitude = results[0].geometry.location.lat();
+                        var longitude = results[0].geometry.location.lng();
+                        $("#x_lat").val("");
+                        $("#y_long").val("");
+                        $("#x_lat").val(latitude);
+                        $("#y_long").val(longitude);
+                    }
+                });
+            }
+        });
+    </script>*@
+</body>
+</html>
